@@ -126,7 +126,7 @@ hr {
 
 .btn-submit,
 .btn-submit > span {
-  background-color: #258460;
+  background-color: #867875;
   color: #fff;
 }
 
@@ -525,4 +525,15 @@ a.Black {
 .icon {
   font-size: 14px;
   margin-right: 5px;
+}
+
+.heading-darkgray {
+  background-color: #867875;
+  width: 100%;
+  height: 35px;
+  color: white;
+  font-size: 13px;
+  border: 1px solid #867875;
+  font-weight: bold;
+  padding: 10px 15px;
 }

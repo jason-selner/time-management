@@ -35,9 +35,11 @@ export class MaintainTimesheetComponent implements OnInit {
   }
 
   setForm() {
+    // default timesheet date to today?
     this.tsForm = this.fb.group({
-      Date: [{ value: null, disabled: false }, Validators.required]
+      Date: [new Date(), Validators.required]
     });
+    this.timesheets = this.service.getDummyTimesheetDetails(this.user.UserId, new Date());
   }
 
   submitDate() {
@@ -46,14 +48,16 @@ export class MaintainTimesheetComponent implements OnInit {
       return;
     }
     console.log('submitDate hit');
-    this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
-      data => {
-        this.timesheets = data;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    // TODO: remove following later
+    this.timesheets = this.service.getDummyTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value);
+    // this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
+    //   data => {
+    //     this.timesheets = data;
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }
+    // );
   }
 
   createTimesheet() {

@@ -1,3 +1,72 @@
-<p>
-  manage-project works!
-</p>
+<div class="container section-border overlayParent">
+  <form [formGroup]="pForm">
+    <div class="row">
+      <div class="col-xs-12 heading-darkgray">
+        <span>Manage {{project?.Title}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <mat-form-field>
+          <input matInput [matDatepicker]="pickerDate1" placeholder="From Date" formControlName="FromDate">
+          <mat-datepicker-toggle matSuffix [for]="pickerDate1"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDate1></mat-datepicker>
+          <mat-error>Date is required</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4">
+        <mat-form-field>
+          <input matInput [matDatepicker]="pickerDate2" placeholder="To Date" formControlName="ToDate">
+          <mat-datepicker-toggle matSuffix [for]="pickerDate2"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDate2></mat-datepicker>
+          <mat-error>Date is required</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-2">
+        <button type="button" (click)="submitDate()" class="btn btn-margin">Search</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12" *ngIf="project">
+        <table class="table" *ngFor="let employee of project.Employees">
+          <tr>
+            <td class="colExpand">
+              <a (click)="expandButtonClick(employee)" role="button">
+                <i *ngIf="employee.Expanded !== true else plusSquare" matTooltip="Minimize" class="fas fa-minus-square icon" aria-hidden="true"></i>
+                <ng-template #plusSquare>
+                  <i matTooltip="Expand" class="fas fa-plus-square icon" aria-hidden="true"></i>
+                </ng-template>
+              </a>
+            </td>
+            <td class="colDescription">{{employee.FullName}}</td>
+            <td class="colTotal">{{employee.TimesheetTotalHours}}</td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <table class="table">
+                <tr class="thead">
+                  <th class="colFrom">FROM</th>
+                  <th class="colTo">TO</th>
+                  <th class="colDescription">Description</th>
+                  <th class="colTotal">Total</th>
+                </tr>
+                <tr *ngFor="let ts of employee.Timesheets">
+                  <td class="colFrom">{{ts.DateFrom | customTime:ts.DateFromHours}}</td>
+                  <td class="colTo">{{ts.DateTo | customTime:ts.DateToHours}}</td>
+                  <td class="colDescription overflowHide">
+                    {{ts.Description}}
+                  </td>
+                  <td class="colTotal">{{ts.TotalHours}}</td>
+                </tr>
+                <tr *ngIf="employee.Timesheets?.length === 0">
+                  <td colspan="4" class="text-align-center">There are currently 0 timesheets.</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <br />
+      </div>
+    </div>
+  </form>
+</div>

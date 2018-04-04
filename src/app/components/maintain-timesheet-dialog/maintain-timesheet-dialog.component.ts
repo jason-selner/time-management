@@ -16,6 +16,7 @@ import { ProjectSimple } from '../../models/project-simple.model';
   styleUrls: ['./maintain-timesheet-dialog.component.css']
 })
 export class MaintainTimesheetDialogComponent {
+  user: EmployeeSimple;
   editTsForm: FormGroup;
   maxCharacters = 2000;
   charactersLeft = 2000;
@@ -23,7 +24,13 @@ export class MaintainTimesheetDialogComponent {
   projects: ProjectSimple[];
 
   // tslint:disable-next-line:max-line-length
-  constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<MaintainTimesheetDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(
+    private fb: FormBuilder,
+    private service: GeneralService,
+    private userService: UserService,
+    public dialogRef: MatDialogRef<MaintainTimesheetDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
     if (!data.actionButtonColor) {
       data.actionButtonColor = 'submit';
     }
@@ -38,6 +45,10 @@ export class MaintainTimesheetDialogComponent {
       this.setForm(null);
     }
     this.timesList = Constants.HOURS;
+
+    this.user = this.userService.getUser();
+    // this.service.getProjects(this.user.UserId).subscribe(data => (this.projects = data), error => console.log(error), () => {});
+    this.projects = this.service.getDummyProjects(this.user.UserId);
   }
 
   setForm(ts: any) {
@@ -47,6 +58,9 @@ export class MaintainTimesheetDialogComponent {
       ProjectId: [ts !== null ? ts.ProjectId : null, Validators.required],
       Description: [ts !== null ? ts.Description : null, Validators.required]
     });
+    if (ts !== null) {
+      this.charactersLeft = this.charactersLeft - ts.Description.length;
+    }
   }
 
   descriptionOnKeyUp(event) {

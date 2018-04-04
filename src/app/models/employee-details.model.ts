@@ -18,4 +18,5 @@ export class EmployeeDetails {
   Timesheets: TimesheetDetails[]; // null unless used in ProjectDetails
   TimesheetTotalHours: number; // null unless used in ProjectDetails, calculated field
 
+  Expanded: boolean; // ignore, internal use
 }

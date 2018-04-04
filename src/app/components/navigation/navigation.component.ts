@@ -37,6 +37,7 @@ export class NavigationComponent implements OnInit {
   }
 
   loadProjects() {
-    this.service.getProjects(this.user.UserId).subscribe(data => (this.projects = data), error => console.log(error), () => {});
+    // this.service.getProjects(this.user.UserId).subscribe(data => (this.projects = data), error => console.log(error), () => {});
+    this.projects = this.service.getDummyProjects(this.user.UserId);
   }
 }

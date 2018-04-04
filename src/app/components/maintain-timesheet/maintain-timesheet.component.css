@@ -1,25 +1,19 @@
-.heading-darkgray {
-  background-color: #867875;
-  width: 100%;
-  height: 35px;
-  color: white;
-  font-size: 13px;
-  border: 1px solid #867875;
-  font-weight: bold;
-  padding: 10px 15px;
-}
-
 .colFrom,
 .colTo {
-  width: 12%;
+  width: 145px;
 }
 
 .colHours {
-  width: 10%;
+  width: 70px;
 }
 
 .colProject {
   width: 15%;
+  text-align: left;
+}
+
+.colDescription {
+  text-align: left;
 }
 
 .colEdit,
