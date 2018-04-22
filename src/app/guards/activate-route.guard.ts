@@ -8,14 +8,12 @@ import { Constants, Roles } from '../../utilities/Constants';
 @Injectable()
 export class ActivateRouteGuard implements CanActivate, CanActivateChild {
   user: EmployeeSimple;
-  constructor(private router: Router, private userService: UserService) { }
+  constructor(private router: Router, private userService: UserService) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     let activate = false;
     this.user = this.userService.getUser();
-    if (this.user && this.user.UserId !== Constants.GUID_EMPTY && Constants.isGuid(this.user.UserId)) {
+    if (this.user && this.user.UserId > 0) {
       if (route.url[0]) {
         activate = this.permissionRoleCheck(route.url[0].path);
       }
@@ -29,11 +27,9 @@ export class ActivateRouteGuard implements CanActivate, CanActivateChild {
     return activate;
   }
 
-  canActivateChild(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     this.user = this.userService.getUser();
-    if (this.user && this.user.UserId !== Constants.GUID_EMPTY && Constants.isGuid(this.user.UserId)) {
+    if (this.user && this.user.UserId > 0) {
       return true;
     }
     this.router.navigate(['login']);

@@ -47,14 +47,14 @@ export class MaintainTimesheetDialogComponent {
     this.timesList = Constants.HOURS;
 
     this.user = this.userService.getUser();
-    // this.service.getProjects(this.user.UserId).subscribe(data => (this.projects = data), error => console.log(error), () => {});
-    this.projects = this.service.getDummyProjects(this.user.UserId);
+    this.service.getProjects(this.user.UserId).subscribe(projData => (this.projects = projData), error => console.log(error), () => {});
   }
 
   setForm(ts: any) {
     this.editTsForm = this.fb.group({
-      From: [ts !== null ? ts.DateFromHours : null, Validators.required],
-      To: [ts !== null ? ts.DateToHours : null, Validators.required],
+      TimesheetId: ts !== null ? ts.TimesheetId : null,
+      DateFromHours: [ts !== null ? ts.DateFromHours : null, Validators.required],
+      DateToHours: [ts !== null ? ts.DateToHours : null, Validators.required],
       ProjectId: [ts !== null ? ts.ProjectId : null, Validators.required],
       Description: [ts !== null ? ts.Description : null, Validators.required]
     });
@@ -67,11 +67,10 @@ export class MaintainTimesheetDialogComponent {
     this.charactersLeft = this.maxCharacters - event.target.value.length;
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
   closeDialog() {
-    this.dialogRef.close(null);
+    if (!this.editTsForm.valid) {
+      return;
+    }
+    this.dialogRef.close(this.editTsForm.value);
   }
 }

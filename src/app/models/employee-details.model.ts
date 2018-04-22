@@ -2,7 +2,7 @@ import { Roles } from '../../utilities/Constants';
 import { TimesheetDetails } from './timesheet-details.model';
 
 export class EmployeeDetails {
-  UserId: string; // uniqueidentifier
+  UserId: number;
 
   // only show load username, password, and roles if admin?
   UserName: string; // login name

@@ -1,6 +1,7 @@
 .colFrom,
 .colTo {
   width: 145px;
+  text-align: left;
 }
 
 .colTotal {
@@ -18,4 +19,9 @@
 
 .colExpand {
   width: 5%;
+}
+
+.sectionBorder {
+  border: 2px solid #c0c4c7;
+  border-radius: 5px;
 }

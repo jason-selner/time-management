@@ -20,6 +20,8 @@ export class ManageProjectComponent implements OnInit {
   pForm: FormGroup;
   project: ProjectDetails;
   projectId: any;
+  assignedEmployees: EmployeeSimple[];
+  unassignedEmployees: EmployeeSimple[];
 
   constructor(
     private fb: FormBuilder,
@@ -35,20 +37,18 @@ export class ManageProjectComponent implements OnInit {
       this.projectId = params['projectId'];
       this.user = this.userService.getUser();
       this.setForm();
+      this.setEmployeeAssignment();
     });
   }
 
   setForm() {
     // default one week?
-    const weekAgo = new Date().setDate(new Date().getDay() - 7);
+    const weekAgo = new Date().setDate(new Date().getDate() - 7);
     this.pForm = this.fb.group({
       FromDate: [weekAgo, Validators.required],
-      ToDate: [new Date(), Validators.required]
+      ToDate: [new Date(), Validators.required],
+      AssignEmployee: null
     });
-  }
-
-  loadProject(fromDate: Date, toDate: Date) {
-    this.project = this.service.getDummyProjectDetails(this.projectId, fromDate, toDate);
   }
 
   submitDate() {
@@ -57,16 +57,14 @@ export class ManageProjectComponent implements OnInit {
       return;
     }
     console.log('submitDate hit');
-    // TODO: remove following later
-    this.project = this.service.getDummyProjectDetails(this.projectId, this.pForm.get('FromDate').value, this.pForm.get('ToDate').value);
-    // this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
-    //   data => {
-    //     this.timesheets = data;
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // );
+    this.service.getProjectDetails(this.projectId, this.pForm.get('FromDate').value, this.pForm.get('ToDate').value).subscribe(
+      data => {
+        this.project = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   expandButtonClick(data: EmployeeDetails) {
@@ -82,5 +80,49 @@ export class ManageProjectComponent implements OnInit {
         }
       });
     }
+  }
+
+  setEmployeeAssignment() {
+    this.service.getEmployeesAssignedToProject(this.projectId).subscribe(
+      data => {
+        this.assignedEmployees = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    this.service.getEmployeesNotAssignedToProject(this.projectId).subscribe(
+      data => {
+        this.unassignedEmployees = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  assignEmployee() {
+    const tempUserId = this.pForm.get('AssignEmployee').value;
+    if (tempUserId && tempUserId > 0) {
+      this.service.assignEmployeeToProject(tempUserId, this.projectId).subscribe(
+        data => {
+          this.setEmployeeAssignment();
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
+  }
+
+  removeEmployee(employee: EmployeeSimple) {
+    this.service.removeEmployeeFromProject(employee.UserId, this.projectId).subscribe(
+      data => {
+        this.setEmployeeAssignment();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

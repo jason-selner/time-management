@@ -36,8 +36,8 @@
             <th class="colDelete">Delete</th>
           </tr>
           <tr *ngFor="let ts of timesheets">
-            <td class="colFrom">{{ts.DateFrom | customTime:ts.DateFromHours}}</td>
-            <td class="colTo">{{ts.DateTo | customTime:ts.DateToHours}}</td>
+            <td class="colFrom">{{ts.CreatedOn | customTime:ts.DateFromHours}}</td>
+            <td class="colTo">{{ts.CreatedOn | customTime:ts.DateToHours}}</td>
             <td class="colHours">{{ts.TotalHours}}</td>
             <td class="colProject overflowHide">
               {{ts.ProjectName}}

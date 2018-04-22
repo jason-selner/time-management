@@ -4,7 +4,6 @@ import 'rxjs/add/operator/map';
 import { Constants, Roles } from '../../utilities/Constants';
 import { EmployeeSimple } from '../models/employee-simple.model';
 
-
 @Injectable()
 export class UserService {
   private user: EmployeeSimple = null;
@@ -42,11 +41,11 @@ export class UserService {
     this.user = new EmployeeSimple();
     this.user.Roles = [Roles.User, Roles.Supervisor, Roles.Admin];
     this.user.FullName = 'Test User';
-    this.user.UserId = '00000000-0000-0000-0000-000000000001';
-    // const urlEndpoint = 'api/SystemUser/getuser';
+    this.user.UserId = 1;
+
     // return new Promise((resolve, reject) => {
     //   this.http
-    //     .get(Constants.SERVICE_URL + urlEndpoint, { withCredentials: true })
+    //     .get(Constants.SERVICE_URL + 'api/SystemUser/getuser', { withCredentials: true })
     //     .map(res => res.json())
     //     .subscribe(
     //       response => {
@@ -57,5 +56,4 @@ export class UserService {
     //     );
     // });
   }
-
 }

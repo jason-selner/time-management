@@ -39,7 +39,14 @@ export class MaintainTimesheetComponent implements OnInit {
     this.tsForm = this.fb.group({
       Date: [new Date(), Validators.required]
     });
-    this.timesheets = this.service.getDummyTimesheetDetails(this.user.UserId, new Date());
+    this.service.getTimesheetDetails(this.user.UserId, new Date()).subscribe(
+      data => {
+        this.timesheets = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   submitDate() {
@@ -48,16 +55,14 @@ export class MaintainTimesheetComponent implements OnInit {
       return;
     }
     console.log('submitDate hit');
-    // TODO: remove following later
-    this.timesheets = this.service.getDummyTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value);
-    // this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
-    //   data => {
-    //     this.timesheets = data;
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // );
+    this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
+      data => {
+        this.timesheets = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   createTimesheet() {
@@ -68,7 +73,27 @@ export class MaintainTimesheetComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.date && result.hours !== undefined) {
+      if (result) {
+        const ts = result as TimesheetDetails;
+        ts.UserId = this.user.UserId;
+        ts.CreatedOn = this.tsForm.get('Date').value;
+        this.service.createTimesheet(ts).subscribe(
+          success => {
+            if (success === true) {
+              this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
+                data => {
+                  this.timesheets = data;
+                },
+                err => {
+                  console.log(err);
+                }
+              );
+            }
+          },
+          err => {
+            console.log(err);
+          }
+        );
       }
     });
   }
@@ -81,10 +106,45 @@ export class MaintainTimesheetComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.date && result.hours !== undefined) {
+      if (result) {
+        this.service.updateTimesheet(result as TimesheetDetails).subscribe(
+          success => {
+            if (success === true) {
+              this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
+                data => {
+                  this.timesheets = data;
+                },
+                err => {
+                  console.log(err);
+                }
+              );
+            }
+          },
+          err => {
+            console.log(err);
+          }
+        );
       }
     });
   }
 
-  deleteTimesheet(ts: TimesheetDetails) {}
+  deleteTimesheet(ts: TimesheetDetails) {
+    this.service.deleteTimesheet(ts.TimesheetId).subscribe(
+      success => {
+        if (success === true) {
+          this.service.getTimesheetDetails(this.user.UserId, this.tsForm.get('Date').value).subscribe(
+            data => {
+              this.timesheets = data;
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
 }

@@ -1,7 +1,7 @@
 import { Roles } from '../../utilities/Constants';
 
 export class EmployeeSimple {
-  UserId: string; // uniqueidentifier
+  UserId: number;
   Roles: Roles[];
 
   FullName: string;

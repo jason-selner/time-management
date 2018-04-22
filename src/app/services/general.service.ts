@@ -14,23 +14,9 @@ import { EmployeeDetails } from '../models/employee-details.model';
 export class GeneralService {
   constructor(private http: Http) {}
 
-  getProjects(userId: string) {
-    const restUrl: string = Constants.SERVICE_URL + 'api/Project/LoadSimple/' + userId;
+  getProjects(userId: number) {
+    const restUrl: string = Constants.SERVICE_URL + 'api/Project/LoadByUser/' + userId;
     return this.http.get(restUrl, { withCredentials: true }).map((res: Response) => res.json() as ProjectSimple[]);
-  }
-  getDummyProjects(userId: string): ProjectSimple[] {
-    const projects: ProjectSimple[] = [];
-    for (let i = 1; i < 6; i++) {
-      const project = new ProjectSimple();
-      project.ProjectId = i;
-      project.SupervisorId = 1;
-      project.SupervisorName = 'Test User';
-      project.Title = 'Project ' + i;
-      project.Budget = 10000 * i;
-      project.Customer = 'Customer ' + i;
-      projects.push(project);
-    }
-    return projects;
   }
 
   getProjectDetails(projectId: number, dateFrom: Date, dateTo: Date) {
@@ -38,74 +24,60 @@ export class GeneralService {
     const restUrl: string = Constants.SERVICE_URL + 'api/Project/LoadDetails/' + projectId + '/' + dateFrom.toDateString() + '/' + dateTo.toDateString();
     return this.http.get(restUrl, { withCredentials: true }).map((res: Response) => res.json() as ProjectDetails);
   }
-  getDummyProjectDetails(projectId: number, dateFrom: Date, dateTo: Date): ProjectDetails {
-    const project = new ProjectDetails();
-    project.ProjectId = projectId;
-    project.SupervisorId = 1;
-    project.SupervisorName = 'Test User';
-    project.Title = 'Project ' + projectId;
-    project.Budget = 100000 * projectId;
-    project.Customer = 'Customer ' + projectId;
-    project.Employees = this.getDummyEmployeeDetails(projectId, dateFrom, dateTo);
-    return project;
-  }
-  getDummyEmployeeDetails(projectId: number, dateFrom: Date, dateTo: Date): EmployeeDetails[] {
-    const employees: EmployeeDetails[] = [];
-    for (let i = 1; i < 6; i++) {
-      const employee = new EmployeeDetails();
-      employee.UserId = '00000000-0000-0000-0000-000000000001';
-      employee.Address = '1111 Something Road, Dekalb, IL 60115';
-      employee.EmailAddress = 'something@something.com';
-      employee.FullName = 'Employee ' + i;
-      employee.JobTitle = 'Developer';
-      employee.Roles = [Roles.User];
-      employee.UserName = 'domain/username';
-      employee.Password = 'password';
-      employee.Salary = 10000 * i + 50000;
-      employee.Timesheets = this.getDummyTimesheetDetails('00000000-0000-0000-0000-000000000001', dateFrom);
-      employees.push(employee);
-    }
-    return employees;
-  }
 
-  getEmployees(projectId: number) {
-    const restUrl: string = Constants.SERVICE_URL + 'api/Employee/LoadSimple/' + projectId;
+  getEmployeesAssignedToProject(projectId: number) {
+    const restUrl: string = Constants.SERVICE_URL + 'api/Employee/LoadByProject/' + projectId;
     return this.http.get(restUrl, { withCredentials: true }).map((res: Response) => res.json() as EmployeeSimple[]);
   }
-  getDummyEmployees(projectId: number): EmployeeSimple[] {
-    const employees: EmployeeSimple[] = [];
-    for (let i = 1; i < 6; i++) {
-      const employee = new EmployeeSimple();
-      employee.UserId = '00000000-0000-0000-0000-000000000001';
-      employee.Address = '1111 Something Road, Dekalb, IL 60115';
-      employee.EmailAddress = 'something@something.com';
-      employee.FullName = 'Employee ' + i;
-      employee.JobTitle = 'Developer';
-      employee.Roles = [Roles.User];
-      employees.push(employee);
-    }
-    return employees;
+
+  getEmployeesNotAssignedToProject(projectId: number) {
+    const restUrl: string = Constants.SERVICE_URL + 'api/Employee/LoadNotByProject/' + projectId;
+    return this.http.get(restUrl, { withCredentials: true }).map((res: Response) => res.json() as EmployeeSimple[]);
   }
 
-  getTimesheetDetails(userId: string, date: Date) {
+  getEmployees() {
+    const restUrl: string = Constants.SERVICE_URL + 'api/Employee/LoadSimple/';
+    return this.http.get(restUrl, { withCredentials: true }).map((res: Response) => res.json() as EmployeeSimple[]);
+  }
+
+  getTimesheetDetails(userId: number, date: Date) {
     const restUrl: string = Constants.SERVICE_URL + 'api/Timesheet/LoadDetails/' + userId + '/' + date.toDateString();
     return this.http.get(restUrl, { withCredentials: true }).map((res: Response) => res.json() as TimesheetDetails[]);
   }
-  getDummyTimesheetDetails(userId: string, date: Date): TimesheetDetails[] {
-    const timesheets: TimesheetDetails[] = [];
-    for (let i = 1; i < 6; i++) {
-      const timesheet = new TimesheetDetails();
-      timesheet.DateFrom = date;
-      timesheet.DateTo = date;
-      timesheet.DateFromHours = i;
-      timesheet.DateToHours = i + 1;
-      timesheet.ProjectId = i;
-      timesheet.ProjectName = 'Project ' + i;
-      timesheet.TotalHours = 1;
-      timesheet.Description = 'some description';
-      timesheet.UserId = userId;
-      timesheets.push(timesheet);
-    }
-    return timesheets;
+
+  createTimesheet(timesheet: any) {
+    const bodyString = JSON.stringify(timesheet);
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const options = new RequestOptions({ headers: headers, withCredentials: true });
+    return this.http.post(Constants.SERVICE_URL + `api/Timesheet/Create`, bodyString, options).map(data => data.json() as boolean);
+  }
+
+  updateTimesheet(timesheet: any) {
+    const bodyString = JSON.stringify(timesheet);
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const options = new RequestOptions({ headers: headers, withCredentials: true });
+    return this.http.put(Constants.SERVICE_URL + `api/Timesheet/Update`, bodyString, options).map(data => data.json() as boolean);
+  }
+
+  deleteTimesheet(timesheetId: number) {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const options = new RequestOptions({ headers: headers, withCredentials: true });
+    return this.http.delete(Constants.SERVICE_URL + 'api/Timesheet/Delete/' + timesheetId, options).map(data => data.json() as boolean);
+  }
+
+  assignEmployeeToProject(userId: number, projectId: number) {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const options = new RequestOptions({ headers: headers, withCredentials: true });
+    return this.http
+      .post(Constants.SERVICE_URL + `api/Project/AssignEmployeeToProject/` + userId + '/' + projectId, null, options)
+      .map(data => data.json() as boolean);
+  }
+
+  removeEmployeeFromProject(userId: number, projectId: number) {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const options = new RequestOptions({ headers: headers, withCredentials: true });
+    return this.http
+      .delete(Constants.SERVICE_URL + 'api/Project/RemoveEmployeeFromProject/' + userId + '/' + projectId, options)
+      .map(data => data.json() as boolean);
   }
 }

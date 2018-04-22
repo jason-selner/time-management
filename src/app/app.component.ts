@@ -13,17 +13,13 @@ import { Constants } from '../utilities/Constants';
 export class AppComponent implements OnInit, OnDestroy {
   user: EmployeeSimple;
   activate = false;
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService
-  ) { }
+  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) {}
 
   ngOnInit() {
     this.user = this.userService.getUser();
-    if (this.user.UserId !== Constants.GUID_EMPTY && Constants.isGuid(this.user.UserId)) {
+    if (this.user.UserId > 0) {
       this.activate = true;
     }
   }
-  ngOnDestroy() { }
+  ngOnDestroy() {}
 }

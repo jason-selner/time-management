@@ -7,7 +7,7 @@ import { DatePipe } from '@angular/common';
 })
 export class CustomTimePipe extends DatePipe implements PipeTransform {
   transform(date: any, time: any): any {
-    if (date && time) {
+    if (date && time !== null) {
       const hourFound = Constants.HOURS.filter(hour => {
         return hour.value === time;
       });
